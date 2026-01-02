@@ -14,7 +14,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install backend dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: |
+          cd /var/www/rampo
+          composer install --no-dev --optimize-autoloader
 
       - name: Build frontend
         run: |
