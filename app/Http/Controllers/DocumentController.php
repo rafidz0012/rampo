@@ -60,21 +60,17 @@ class DocumentController extends Controller
 
     public function show(Document $document)
     {
-        $this->authorize('view', $document);
         return view('documents.show', compact('document'));
     }
 
     public function download(Document $document)
     {
-        $this->authorize('view', $document);
         return Storage::disk('public')->download($document->file_path, $document->name . '.' . $document->file_type);
     }
 
     public function destroy(Document $document)
     {
-        $this->authorize('delete', $document);
         $document->delete();
-
         return redirect()->route('documents.index')
             ->with('success', 'Dokumen berhasil dihapus!');
     }

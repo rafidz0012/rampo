@@ -49,15 +49,12 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense)
     {
-        $this->authorize('update', $expense);
         $categories = ['makan', 'transport', 'belanja', 'tagihan', 'hiburan', 'kesehatan', 'pendidikan', 'other'];
         return view('expenses.edit', compact('expense', 'categories'));
     }
 
     public function update(Request $request, Expense $expense)
     {
-        $this->authorize('update', $expense);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
@@ -74,7 +71,6 @@ class ExpenseController extends Controller
 
     public function destroy(Expense $expense)
     {
-        $this->authorize('delete', $expense);
         $expense->delete();
 
         return redirect()->route('expenses.index')

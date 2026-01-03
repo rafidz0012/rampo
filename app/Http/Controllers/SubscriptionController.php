@@ -46,13 +46,11 @@ class SubscriptionController extends Controller
 
     public function edit(Subscription $subscription)
     {
-        $this->authorize('update', $subscription);
         return view('subscriptions.edit', compact('subscription'));
     }
 
     public function update(Request $request, Subscription $subscription)
     {
-        $this->authorize('update', $subscription);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -71,7 +69,6 @@ class SubscriptionController extends Controller
 
     public function destroy(Subscription $subscription)
     {
-        $this->authorize('delete', $subscription);
         $subscription->delete();
 
         return redirect()->route('subscriptions.index')

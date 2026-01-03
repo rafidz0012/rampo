@@ -49,14 +49,12 @@ class IncomeController extends Controller
 
     public function edit(Income $income)
     {
-        $this->authorize('update', $income);
         $categories = ['gaji', 'bonus', 'investasi', 'freelance', 'hadiah', 'other'];
         return view('incomes.edit', compact('income', 'categories'));
     }
 
     public function update(Request $request, Income $income)
     {
-        $this->authorize('update', $income);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -74,7 +72,6 @@ class IncomeController extends Controller
 
     public function destroy(Income $income)
     {
-        $this->authorize('delete', $income);
         $income->delete();
 
         return redirect()->route('incomes.index')
