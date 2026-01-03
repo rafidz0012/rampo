@@ -43,19 +43,16 @@ class NoteController extends Controller
 
     public function show(Note $note)
     {
-        $this->authorize('view', $note);
         return view('notes.show', compact('note'));
     }
 
     public function edit(Note $note)
     {
-        $this->authorize('update', $note);
         return view('notes.edit', compact('note'));
     }
 
     public function update(Request $request, Note $note)
     {
-        $this->authorize('update', $note);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -74,7 +71,6 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        $this->authorize('delete', $note);
         $note->delete();
 
         return redirect()->route('notes.index')
