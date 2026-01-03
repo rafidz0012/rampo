@@ -33,7 +33,7 @@
             </div>
 
             <div class="pt-4 border-t border-gray-700/50">
-                <h3 class="text-lg font-medium mb-4">Ubah</h3>
+                <h3 class="text-lg font-medium mb-4">Ubah Password</h3>
                 <p class="text-sm text-gray-400 mb-4">Kosongkan jika tidak ingin mengubah password</p>
 
                 <div class="space-y-4">
