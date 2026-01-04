@@ -90,6 +90,16 @@
                         Dokumen
                     </x-sidebar-link>
                 </div>
+
+                <!-- Integrasi Section -->
+                <div class="pt-4">
+                    <p x-show="sidebarOpen" x-cloak
+                        class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Integrasi</p>
+                    <x-sidebar-link :href="route('n8n.index')" :active="request()->routeIs('n8n.*')"
+                        icon="link">
+                        N8n Clipper
+                    </x-sidebar-link>
+                </div>
             </nav>
 
             <!-- User Section -->

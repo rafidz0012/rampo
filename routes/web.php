@@ -7,6 +7,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\N8nController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // N8n Clipper
+    Route::get('/n8n', [N8nController::class, 'index'])->name('n8n.index');
+    Route::post('/n8n', [N8nController::class, 'send'])->name('n8n.send');
 });
 
 require __DIR__ . '/auth.php';
