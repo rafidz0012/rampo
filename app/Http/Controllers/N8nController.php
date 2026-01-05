@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\ClipCandidate;
 
 class N8nController extends Controller
 {
     public function index()
     {
-        return view('n8n.index');
+        $candidates = ClipCandidate::with('video')->latest()->limit(50)->get();
+        return view('n8n.index', compact('candidates'));
     }
 
 public function send(Request $request)

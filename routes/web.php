@@ -10,6 +10,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\N8nController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
+use App\Http\Controllers\ClipperController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // N8n Clipper
     Route::get('/n8n', [N8nController::class, 'index'])->name('n8n.index');
     Route::post('/n8n', [N8nController::class, 'send'])->name('n8n.send');
+
+    Route::post('/clipper', [ClipperController::class, 'analyze'])->name('clipper.analyze');
 });
 
 require __DIR__ . '/auth.php';
