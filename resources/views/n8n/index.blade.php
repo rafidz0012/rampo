@@ -1,5 +1,5 @@
 <x-layouts.dashboard>
-    <x-slot name="header">N8n Clipper</x-slot>
+    <x-slot name="header">Clipper</x-slot>
 
     <div class="max-w-3xl mx-auto" x-data="{ tab: 'form', selectedClip: null }">
         <!-- Tabs Navigation -->
