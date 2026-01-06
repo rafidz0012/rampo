@@ -12,7 +12,8 @@ class N8nController extends Controller
     public function index()
     {
         $candidates = ClipCandidate::with('video')->latest()->limit(50)->get();
-        return view('n8n.index', compact('candidates'));
+        $clips = \App\Models\Clip::with('candidate')->latest()->limit(50)->get();
+        return view('n8n.index', compact('candidates', 'clips'));
     }
 
 public function send(Request $request)

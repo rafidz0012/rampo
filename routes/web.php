@@ -12,6 +12,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ClipperController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Response;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -50,6 +51,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/n8n', [N8nController::class, 'send'])->name('n8n.send');
 
     Route::post('/clipper', [ClipperController::class, 'analyze'])->name('clipper.analyze');
+    Route::post('/clip/{candidate}', [ClipperController::class, 'process'])->name('clip.process');
+    Route::get('/clips/{filename}', function ($filename) {
+        $path = "/clips/" . $filename;
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type' => 'video/mp4'
+        ]);
+    });
+
 });
 
 require __DIR__ . '/auth.php';
