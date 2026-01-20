@@ -100,6 +100,16 @@
                         N8n Clipper
                     </x-sidebar-link>
                 </div>
+
+                <!-- Sistem Section -->
+                <div class="pt-4">
+                    <p x-show="sidebarOpen" x-cloak
+                        class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sistem</p>
+                    <x-sidebar-link :href="route('monitor.index')" :active="request()->routeIs('monitor.*')"
+                        icon="server">
+                        Server Monitor
+                    </x-sidebar-link>
+                </div>
             </nav>
 
             <!-- User Section -->
