@@ -26,11 +26,8 @@ class ClipperController extends Controller
 
         $data = $response->json();
 
-        if (
-            empty($data['video_id']) ||
-            empty($data['candidates'])
-        ) {
-            dd('Invalid response', $data);
+        if (empty($data['video_id']) || !isset($data['candidates'])) {
+            dd('Invalid response structure', $data);
         }
 
         $video = Video::firstOrCreate(
@@ -39,6 +36,20 @@ class ClipperController extends Controller
         );
 
         ClipCandidate::where('video_id', $video->id)->delete();
+
+        if (count($data['candidates']) === 0) {
+            ClipCandidate::create([
+                'video_id'      => $video->id,
+                'start_seconds' => 0,
+                'end_seconds'   => 0,
+                'duration'      => 0,
+                'score'         => 0,
+                'preview'       => 'No clip candidate found',
+                'status'        => 'pending'
+            ]);
+
+            return back()->with('warning', 'Tidak ada clip kandidat, data default dibuat');
+        }
 
         foreach ($data['candidates'] as $c) {
             ClipCandidate::create([
@@ -54,6 +65,7 @@ class ClipperController extends Controller
 
         return back()->with('success', 'Clip candidates berhasil disimpan');
     }
+
     public function process(ClipCandidate $candidate)
     {
         // kirim request ke Node (ASYNC)
@@ -76,6 +88,20 @@ class ClipperController extends Controller
         $candidate->update(['status' => 'processing']);
 
         return back()->with('success', 'Clip sedang diproses');
+    }
+
+    public function update(Request $request, ClipCandidate $candidate)
+    {
+        $validated = $request->validate([
+            'start_seconds' => 'required|numeric',
+            'end_seconds'   => 'required|numeric',
+            'score'         => 'required|numeric',
+            'status'        => 'required|string',
+        ]);
+
+        $candidate->update($validated);
+
+        return back()->with('success', 'Candidate updated successfully');
     }
 
 }

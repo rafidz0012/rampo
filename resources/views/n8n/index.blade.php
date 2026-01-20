@@ -1,7 +1,7 @@
 <x-layouts.dashboard>
     <x-slot name="header">Clipper</x-slot>
 
-    <div class="max-w-3xl mx-auto" x-data="{ tab: 'form', selectedClip: null }">
+    <div class="max-w-3xl mx-auto" x-data="{ tab: 'form', selectedClip: null, editingCandidate: null }">
         <!-- Tabs Navigation -->
         <div class="flex space-x-1 p-1 bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 mb-6 w-fit">
             <button 
@@ -109,13 +109,20 @@
                                             </span>
                                         </td>
                                         <td class="py-4 px-4">
-                                            <form method="POST" action="{{ route('clip.process', $candidate->id) }}">
-                                                @csrf
+                                            <div class="flex items-center gap-2">
+                                                <form method="POST" action="{{ route('clip.process', $candidate->id) }}">
+                                                    @csrf
+                                                    <button
+                                                        class="px-3 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700">
+                                                        Clip
+                                                    </button>
+                                                </form>
                                                 <button
-                                                    class="px-3 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700">
-                                                    Clip
+                                                    @click="editingCandidate = {{ $candidate }}"
+                                                    class="px-3 py-1 text-xs rounded bg-gray-600 hover:bg-gray-700">
+                                                    Edit
                                                 </button>
-                                            </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -256,6 +263,99 @@
                                 <source :src="selectedClip" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Edit Candidate Modal -->
+        <div 
+            x-show="editingCandidate" 
+            style="display: none;"
+            class="fixed inset-0 z-50 overflow-y-auto" 
+            aria-labelledby="modal-title" 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div 
+                    x-show="editingCandidate" 
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" 
+                    @click="editingCandidate = null" 
+                    aria-hidden="true"
+                ></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div 
+                    x-show="editingCandidate" 
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    class="relative inline-block align-bottom bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-700"
+                >
+                    <div class="absolute top-0 right-0 pt-4 pr-4 z-10">
+                        <button 
+                            @click="editingCandidate = null"
+                            type="button" 
+                            class="bg-gray-800 rounded-md text-gray-400 hover:text-gray-200 focus:outline-none"
+                        >
+                            <span class="sr-only">Close</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-100 mb-4">Edit Candidate</h3>
+                        
+                        <template x-if="editingCandidate">
+                            <form method="POST" :action="`/candidates/${editingCandidate.id}`">
+                                @csrf
+                                @method('PUT')
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Start Seconds</label>
+                                        <input type="number" step="0.001" name="start_seconds" x-model="editingCandidate.start_seconds" class="w-full bg-gray-700 border-gray-600 rounded-lg text-gray-100 px-3 py-2">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">End Seconds</label>
+                                        <input type="number" step="0.001" name="end_seconds" x-model="editingCandidate.end_seconds" class="w-full bg-gray-700 border-gray-600 rounded-lg text-gray-100 px-3 py-2">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Score</label>
+                                        <input type="number" step="0.01" name="score" x-model="editingCandidate.score" class="w-full bg-gray-700 border-gray-600 rounded-lg text-gray-100 px-3 py-2">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                                        <select name="status" x-model="editingCandidate.status" class="w-full bg-gray-700 border-gray-600 rounded-lg text-gray-100 px-3 py-2">
+                                            <option value="pending">Pending</option>
+                                            <option value="processed">Processed</option>
+                                            <option value="rejected">Rejected</option>
+                                            <option value="failed">Failed</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 flex justify-end gap-3">
+                                    <button type="button" @click="editingCandidate = null" class="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600">Cancel</button>
+                                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Changes</button>
+                                </div>
+                            </form>
                         </template>
                     </div>
                 </div>

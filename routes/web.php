@@ -11,6 +11,7 @@ use App\Http\Controllers\N8nController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ClipperController;
+use App\Http\Controllers\Server\ServerMonitorController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 
@@ -50,8 +51,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/n8n', [N8nController::class, 'index'])->name('n8n.index');
     Route::post('/n8n', [N8nController::class, 'send'])->name('n8n.send');
 
+    // Server Monitor
+    Route::get('/monitor', [ServerMonitorController::class, 'index'])->name('monitor.index');
+    Route::get('/monitor/stats', [ServerMonitorController::class, 'stats'])->name('monitor.stats');
+
     Route::post('/clipper', [ClipperController::class, 'analyze'])->name('clipper.analyze');
     Route::post('/clip/{candidate}', [ClipperController::class, 'process'])->name('clip.process');
+    Route::put('/candidates/{candidate}', [ClipperController::class, 'update'])->name('candidates.update');
     Route::get('/clips/{filename}', function ($filename) {
         $path = "/clips/" . $filename;
 
