@@ -12,6 +12,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ClipperController;
 use App\Http\Controllers\Server\ServerMonitorController;
+use App\Http\Controllers\NontonController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 
@@ -54,6 +55,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Server Monitor
     Route::get('/monitor', [ServerMonitorController::class, 'index'])->name('monitor.index');
     Route::get('/monitor/stats', [ServerMonitorController::class, 'stats'])->name('monitor.stats');
+
+    // Nonton
+    Route::prefix('nonton')->name('nonton.')->group(function () {
+        Route::get('/', [NontonController::class, 'index'])->name('index');
+        Route::get('/search', [NontonController::class, 'search'])->name('search');
+        Route::get('/category/{category}', [NontonController::class, 'category'])->name('category');
+        Route::get('/watch/{detailPath}', [NontonController::class, 'watch'])->name('watch');
+        Route::get('/watch/{detailPath}', [NontonController::class, 'watch'])->name('watch');
+        Route::get('/detail/{detailPath}', [NontonController::class, 'detail'])->name('detail')->where('detailPath', '.*');
+    });
+
+    // User Management
+    Route::resource('users', \App\Http\Controllers\UserController::class)->except(['show', 'edit', 'update']);
+
+    // Chat
+    Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/{user}', [\App\Http\Controllers\ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::post('/chat', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat-unread', [\App\Http\Controllers\ChatController::class, 'checkUnread'])->name('chat.unread');
 
     Route::post('/clipper', [ClipperController::class, 'analyze'])->name('clipper.analyze');
     Route::post('/clip/{candidate}', [ClipperController::class, 'process'])->name('clip.process');

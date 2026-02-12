@@ -11,6 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -101,6 +102,16 @@
                     </x-sidebar-link>
                 </div>
 
+                <!-- Komunikasi Section -->
+                <div class="pt-4">
+                    <p x-show="sidebarOpen" x-cloak
+                        class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Komunikasi</p>
+                    <x-sidebar-link :href="route('chat.index')" :active="request()->routeIs('chat.*')"
+                        icon="chat">
+                        Chat
+                    </x-sidebar-link>
+                </div>
+
                 <!-- Sistem Section -->
                 <div class="pt-4">
                     <p x-show="sidebarOpen" x-cloak
@@ -108,6 +119,26 @@
                     <x-sidebar-link :href="route('monitor.index')" :active="request()->routeIs('monitor.*')"
                         icon="server">
                         Server Monitor
+                    </x-sidebar-link>
+                </div>
+
+                <!-- Hiburan Section -->
+                <div class="pt-4">
+                    <p x-show="sidebarOpen" x-cloak
+                        class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Hiburan</p>
+                    <x-sidebar-link :href="route('nonton.index')" :active="request()->routeIs('nonton.*')"
+                        icon="play">
+                        Nonton
+                    </x-sidebar-link>
+                </div>
+
+                <!-- Akun Section -->
+                <div class="pt-4">
+                    <p x-show="sidebarOpen" x-cloak
+                        class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Akun</p>
+                    <x-sidebar-link :href="route('users.index')" :active="request()->routeIs('users.*')"
+                        icon="users">
+                        Users
                     </x-sidebar-link>
                 </div>
             </nav>
@@ -178,6 +209,8 @@
             </div>
         </main>
     </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+
 </body>
 
 </html>
