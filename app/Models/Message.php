@@ -17,6 +17,8 @@ class Message extends Model
         'file_name',
     ];
 
+    protected $appends = ['file_url'];
+
     protected $casts = [
         'is_read' => 'boolean',
     ];
@@ -29,5 +31,13 @@ class Message extends Model
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public function getFileUrlAttribute()
+    {
+        if ($this->file_path) {
+            return asset('storage/' . $this->file_path);
+        }
+        return null;
     }
 }

@@ -57,17 +57,17 @@
                                         <div class="mb-2">
                                             <!-- Image -->
                                             <template x-if="msg.file_type.startsWith('image/')">
-                                                <img :src="'/storage/' + msg.file_path}" class="rounded-lg max-h-60 w-auto cursor-pointer" @click="window.open('/storage/' + msg.file_path, '_blank')">
+                                                <img :src="msg.file_url" class="rounded-lg max-h-60 w-auto cursor-pointer" @click="window.open(msg.file_url, '_blank')">
                                             </template>
                                             
                                             <!-- Video -->
                                             <template x-if="msg.file_type.startsWith('video/')">
-                                                <video :src="'/storage/' + msg.file_path}" controls class="rounded-lg max-h-60 w-full"></video>
+                                                <video :src="msg.file_url" controls class="rounded-lg max-h-60 w-full"></video>
                                             </template>
                                             
                                             <!-- Other Files -->
                                             <template x-if="!msg.file_type.startsWith('image/') && !msg.file_type.startsWith('video/')">
-                                                <a :href="'/storage/' + msg.file_path}" target="_blank" class="flex items-center gap-2 p-2 rounded bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition">
+                                                <a :href="msg.file_url" target="_blank" class="flex items-center gap-2 p-2 rounded bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition">
                                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                                     <span class="truncate" x-text="msg.file_name"></span>
                                                 </a>
