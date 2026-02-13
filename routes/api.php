@@ -22,4 +22,5 @@ Route::middleware('auth:sanctum')->prefix('chat')->group(function () {
     Route::get('/messages/{user}', [ChatController::class, 'messages']);
     Route::post('/messages', [ChatController::class, 'sendMessage']);
     Route::get('/unread', [ChatController::class, 'unread']);
+    Route::post('/save-fcm-token', [ChatController::class, 'saveFcmToken']);
 });

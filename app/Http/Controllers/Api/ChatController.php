@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -94,6 +96,9 @@ class ChatController extends Controller
 
         $message = Message::create($data);
 
+        // Send FCM push notification to receiver
+        $this->sendFcmNotification($message);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Message sent successfully',
@@ -116,5 +121,59 @@ class ChatController extends Controller
             'status' => 'success',
             'data' => $unreadCounts
         ]);
+    }
+
+    /**
+     * Save FCM token for the authenticated user.
+     */
+    public function saveFcmToken(Request $request)
+    {
+        $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
+
+        $request->user()->update([
+            'fcm_token' => $request->fcm_token,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'FCM token saved successfully',
+        ]);
+    }
+
+    /**
+     * Send FCM notification to the message receiver.
+     */
+    private function sendFcmNotification(Message $message): void
+    {
+        try {
+            $receiver = User::find($message->receiver_id);
+
+            if (!$receiver || !$receiver->fcm_token) {
+                return;
+            }
+
+            $sender = User::find($message->sender_id);
+            $senderName = $sender ? $sender->name : 'Seseorang';
+
+            $firebaseService = app(FirebaseService::class);
+
+            $firebaseService->sendNotification(
+                fcmToken: $receiver->fcm_token,
+                title: 'Pesan Baru',
+                body: "{$senderName} mengirim pesan",
+                data: [
+                    'type' => 'chat',
+                    'sender_id' => $message->sender_id,
+                    'message_id' => $message->id,
+                ],
+            );
+        } catch (\Exception $e) {
+            Log::error('ChatController: Failed to send FCM notification', [
+                'message_id' => $message->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
