@@ -41,3 +41,4 @@ jobs:
         run: |
           cd /var/www/rampo
           php artisan optimize:clear
+          php artisan migrate
