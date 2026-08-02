@@ -29,14 +29,53 @@ class ReceivableController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filter berdasarkan bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter berdasarkan tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
         $receivables = $query->latest()->paginate(10)->withQueryString();
 
-        // Hitung total sisa tagihan piutang milik user
+        // 1. Hitung Statistik Ringkasan Piutang
         $totalRemaining = Receivable::where('user_id', Auth::id())
             ->where('status', '!=', 'paid')
             ->sum('remaining_amount');
 
-        return view('receivables.index', compact('receivables', 'totalRemaining'));
+        $totalPaid = Receivable::where('user_id', Auth::id())
+            ->where('status', 'paid')
+            ->sum('remaining_amount'); // Atau kolom 'amount' jika 'remaining_amount' bernilai 0 saat paid
+
+        $totalAllReceivables = Receivable::where('user_id', Auth::id())
+            ->sum('remaining_amount');
+
+        // 2. Data Grafik (Piutang Baru Dibuat dalam 6 Bulan Terakhir)
+        $chartLabels = [];
+        $chartData = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            
+            $chartLabels[] = $date->translatedFormat('M Y');
+            
+            $chartData[] = Receivable::where('user_id', Auth::id())
+                ->whereMonth('created_at', $date->month)
+                ->whereYear('created_at', $date->year)
+                ->sum('remaining_amount');
+        }
+
+        return view('receivables.index', compact(
+            'receivables', 
+            'totalRemaining', 
+            'totalPaid', 
+            'totalAllReceivables', 
+            'chartLabels', 
+            'chartData'
+        ));
     }
 
     /**

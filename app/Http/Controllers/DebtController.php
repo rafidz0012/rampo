@@ -5,20 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\Debt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DebtController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil daftar hutang milik user yang sedang login
-        $debts = Debt::where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
+        // Query dasar untuk hutang milik user yang sedang login
+        $query = Debt::where('user_id', Auth::id());
 
-        return view('debt.index', compact('debts'));
+        // Filter Pencarian berdasarkan judul atau pemberi hutang
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('creditor_name', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter berdasarkan status hutang
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Hitung total sisa hutang (clone query agar filter tetap berlaku jika di-search)
+        $totalRemaining = (clone $query)->where('status', '!=', 'paid')->sum('remaining_amount');
+
+        // Ambil data hutang dengan pagination dan simpan query string URL
+        $debts = $query->latest()->paginate(10)->withQueryString();
+
+        return view('debt.index', compact('debts', 'totalRemaining'));
     }
 
     /**
