@@ -15,6 +15,8 @@ use App\Http\Controllers\Server\ServerMonitorController;
 use App\Http\Controllers\NontonController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
+use App\Http\Controllers\DebtController;
+use App\Http\Controllers\ReceivableController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -28,6 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('incomes', IncomeController::class)->except(['show']);
     Route::resource('expenses', ExpenseController::class)->except(['show']);
     Route::resource('subscriptions', SubscriptionController::class)->except(['show']);
+    Route::resource('receivables', ReceivableController::class)->except(['show']);
+    Route::resource('debt', DebtController::class)->except(['show']);
 
     // Catatan
     Route::resource('notes', NoteController::class);

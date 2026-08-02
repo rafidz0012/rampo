@@ -68,6 +68,14 @@
                         icon="trending-down">
                         Pengeluaran
                     </x-sidebar-link>
+                    <x-sidebar-link :href="route('receivables.index')" :active="request()->routeIs('receivables.*')"
+                        icon="trending-up">
+                        Piutang
+                    </x-sidebar-link>
+                    <x-sidebar-link :href="route('debt.index')" :active="request()->routeIs('debt.*')"
+                        icon="trending-down">
+                        Hutang
+                    </x-sidebar-link>
                     <x-sidebar-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')"
                         icon="refresh">
                         Langganan
